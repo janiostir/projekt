@@ -18,13 +18,13 @@ export class UserService {
         return this.userRepository.save(data);
     }
 
-    findOneBy(condition): Promise<User> { // učitl je tu dau findOne, sam men ni delalo
-        return this.userRepository.findOneBy(condition);
+    findOne(condition): Promise<User> { // učitl je tu dau findOne, sam men ni delalo
+        return this.userRepository.findOne(condition);
     }
 
     async update(id, data): Promise<User> {
         await this.userRepository.update(id, data);
-        return this.findOneBy({id});
+        return this.findOne({id});
     }
 
     delete(id: number): Promise<any> {

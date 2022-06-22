@@ -1,16 +1,29 @@
-import {Body, Controller, Delete, Get, Param, Post, Put} from '@nestjs/common';
+import {Body, Controller, Delete, Get, Param, Post, Put, Req} from '@nestjs/common';
 import {UserService} from "./user.service";
 import {User} from "./user.entity";
+import {Request} from "express";
+import {JwtService} from "@nestjs/jwt";
 
 @Controller('users') // \users
 export class UserController {
 
-    constructor(private userService: UserService) {
+    constructor(
+        private userService: UserService,
+        private jwtService: JwtService) {
     }
 
     @Get('users') // če dam npr 'vsi' bi rabu potem dat v urlju na koncu \vsi -> users\vsi
     all(){
         return this.userService.all();
+    }
+
+    @Get('profile')
+    async profile(@Req() request: Request){
+        const token = request.cookies['jwt'];
+
+        const data = await this.jwtService.verifyAsync(token);
+
+        return this.userService.findOne({id: data.id});
     }
 
     @Post('user') // \users\user
@@ -20,7 +33,7 @@ export class UserController {
 
     @Get(':id') // učitl je pr temu dau findOne, sam me ni delalo tako
     getUserById(@Param('id') id: number): Promise<User>{
-        return this.userService.findOneBy({id});
+        return this.userService.findOne({id});
     }
 
     @Put(':id')
@@ -37,5 +50,8 @@ export class UserController {
     ): Promise<any>{
         return this.userService.delete(id);
     }
+
+
+
 
 }
