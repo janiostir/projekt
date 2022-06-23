@@ -4,7 +4,7 @@ import {
     Controller,
     NotFoundException,
     Post,
-    Res
+    Res, UseGuards
 } from '@nestjs/common';
 import {UserService} from "../user/user.service";
 import {RegisterDto} from "./register.dto";
@@ -12,6 +12,7 @@ import * as bcrypt from 'bcrypt';
 import {LoginDto} from "./login.dto";
 import {JwtService} from "@nestjs/jwt";
 import {Response} from 'express';
+import {AuthGuard} from "./auth.guard";
 
 @Controller('auth')
 export class AuthController {
@@ -52,6 +53,7 @@ export class AuthController {
         return user;
     }
 
+        @UseGuards(AuthGuard)
         @Post('logout')
         logout(@Res({passthrough:true}) response: Response) {
             response.clearCookie('jwt');

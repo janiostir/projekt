@@ -1,8 +1,9 @@
-import {Body, Controller, Delete, Get, Param, Post, Put, Req} from '@nestjs/common';
+import {Body, Controller, Delete, Get, Param, Post, Put, Req, UseGuards} from '@nestjs/common';
 import {UserService} from "./user.service";
 import {User} from "./user.entity";
 import {Request} from "express";
 import {JwtService} from "@nestjs/jwt";
+import {AuthGuard} from "../auth/auth.guard";
 
 @Controller('users') // \users
 export class UserController {
@@ -17,6 +18,8 @@ export class UserController {
         return this.userService.all();
     }
 
+
+    @UseGuards(AuthGuard)
     @Get('profile')
     async profile(@Req() request: Request){
         const token = request.cookies['jwt'];
@@ -50,8 +53,6 @@ export class UserController {
     ): Promise<any>{
         return this.userService.delete(id);
     }
-
-
 
 
 }
