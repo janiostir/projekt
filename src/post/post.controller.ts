@@ -2,15 +2,25 @@ import {
     Body,
     Controller,
     Delete,
-    Get, Param,
-    Post, Put, Req, UnauthorizedException, UseGuards,
+    Get,
+    Param,
+    Post,
+    Put,
+    Req,
+    UnauthorizedException,
+    UploadedFile,
+    UseGuards,
+    UseInterceptors
 } from '@nestjs/common';
 import {PostService} from "./post.service";
 import {AuthGuard} from "../auth/auth.guard";
 import {JwtService} from "@nestjs/jwt";
 import {CreatePostDto} from "./create-post.dto";
-import {Request} from "express";
+import {Request} from 'express';
 import {UpdatePostDto} from "./update-post.dto";
+import {FileInterceptor} from "@nestjs/platform-express";
+import {diskStorage} from 'multer';
+import {extname} from 'path';
 
 @UseGuards(AuthGuard)
 @Controller('post')
@@ -38,11 +48,25 @@ export class PostController {
         return this.postService.create({
             title: data.title,
             content: data.content,
-            subject_id: data.subject_id,
+            subject: {id: data.subject_id},
             user: {id: user.id}
         });
 
     }
+
+    @Post('upload')
+    @UseInterceptors(FileInterceptor('file',{
+        storage: diskStorage({
+            destination: './uploads',
+            filename(_,file,callback) {
+                return callback(null,file.originalname);
+            }
+        })
+    }))
+    uploadFile(@UploadedFile() file: Express.Multer.File) {
+        console.log(file);
+    }
+
 
     @Get(':id')
     getOne(@Param('id') id:number) {
