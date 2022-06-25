@@ -35,7 +35,11 @@ export class PostService {
     }
 
     findReplies(id: number): Promise<Post[]>{
-        return this.postRepository.find({where: {replyId: id}});
+        return this.postRepository.find({where: {replyId: id}, order: {created_at:"ASC"}});
+}
+
+    findPosts(): Promise<Post[]>{
+        return this.postRepository.find({where: {replyId: null}, order: {created_at: "DESC"}});
     }
 
 }

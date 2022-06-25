@@ -38,6 +38,11 @@ export class PostController {
         return this.postService.getAll();
     }
 
+    @Get('posts')
+    getPosts(){
+        return this.postService.findPosts();
+    }
+
     @Post()
     async create(
         @Body() data: CreatePostDto,
@@ -133,6 +138,8 @@ export class PostController {
             user: {id: user.id}
         });
     }
+
+
 
 
 }
