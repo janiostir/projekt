@@ -5,7 +5,7 @@ import {
     ManyToOne,
     PrimaryGeneratedColumn,
     JoinColumn,
-    UpdateDateColumn
+    UpdateDateColumn, OneToMany
 } from "typeorm";
 import {User} from "../user/user.entity";
 import {Subject} from "../subject/subject.entity";
@@ -36,4 +36,16 @@ export class Post {
     @ManyToOne(()=> Subject, (subject) => subject.posts, {eager:true})
     @JoinColumn({name: 'subject_id'})
     subject: Subject;
+
+
+    @Column({name: 'reply_id', nullable: true})
+    replyId: number;
+
+    @ManyToOne(() => Post, post => post.parent_posts)
+    @JoinColumn({name: 'reply_id'})
+    child_posts: Post;
+
+    @OneToMany(() => Post, post => post.child_posts)
+    parent_posts: Post[];
+
 }

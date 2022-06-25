@@ -34,4 +34,8 @@ export class PostService {
         return this.postRepository.delete({id});
     }
 
+    findReplies(id: number): Promise<Post[]>{
+        return this.postRepository.find({where: {replyId: id}});
+    }
+
 }

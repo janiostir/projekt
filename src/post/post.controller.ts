@@ -21,6 +21,7 @@ import {UpdatePostDto} from "./update-post.dto";
 import {FileInterceptor} from "@nestjs/platform-express";
 import {diskStorage} from 'multer';
 import {extname} from 'path';
+import {ReplyPostDto} from "./create-reply.dto";
 
 @UseGuards(AuthGuard)
 @Controller('post')
@@ -110,5 +111,28 @@ export class PostController {
         return this.postService.update(id, data);
 
     }
+
+
+    @Get('replies/:id') // iskanje replyou
+    getReplies(@Param('id') id:number){
+        return this.postService.findReplies(id);
+    }
+
+    @Post('reply') // ustvarjanje replyja
+    async reply (
+        @Body() data: ReplyPostDto,
+        @Req() request: Request) {
+
+        const jwt = request.cookies['jwt'];
+        const user = await this.jwtService.verifyAsync(jwt);
+
+        return this.postService.create({
+            title: data.title,
+            content: data.content,
+            child_posts: {id: data.reply_id},
+            user: {id: user.id}
+        });
+    }
+
 
 }
